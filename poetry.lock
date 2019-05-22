@@ -1,0 +1,50 @@
+[[package]]
+category = "dev"
+description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+name = "django"
+optional = false
+python-versions = "*"
+version = "1.4.22"
+
+[[package]]
+category = "main"
+description = "a version of dict that keeps keys in insertion resp. sorted order"
+marker = "platform_python_implementation == \"CPython\" and python_version <= \"2.7\""
+name = "ruamel.ordereddict"
+optional = false
+python-versions = "*"
+version = "0.4.13"
+
+[[package]]
+category = "main"
+description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
+name = "ruamel.yaml"
+optional = false
+python-versions = "*"
+version = "0.15.96"
+
+[package.dependencies]
+[package.dependencies."ruamel.ordereddict"]
+python = "<2.8"
+version = "*"
+
+[[package]]
+category = "main"
+description = "South: Migrations for Django"
+name = "south"
+optional = false
+python-versions = "*"
+version = "1.0.2"
+
+[extras]
+docs = []
+
+[metadata]
+content-hash = "076bc028c851cfb1a8a137e3444e7ba977b82930fc82706edd72a25e20479a90"
+python-versions = ">2.7"
+
+[metadata.hashes]
+django = ["d0e2c9d772fcab2cf9c09e1c05e711cf5fe5eb93225762b29f0739d65e0d1784"]
+"ruamel.ordereddict" = ["08b4b19fe518d32251a5338e039c4dc9eb0876f2919f94c9b8d2f9446ea80806", "150ce8e6c514a2a2b62753622a75874962561f8e5eeec81a3172ab952807bf0b", "45541836cbfdde630033cae7bbbe35acbac87a0ceec79f944b7a3bedd940fe78", "854dd4a524811b16111b1107d8a751e4ca064d2bb103d3d91deab75de36b6620", "aee2fa23e884249b4284b728888c553d551e5bfd4de2731f10153fd7813ec55f", "bf0a198c8ce5d973c24e5dba12d3abc254996788ca6ad8448eabc6aa710db149"]
+"ruamel.yaml" = ["0372b039c2358db2e7a7d5c77f2a37c552bd45896936f430678b5f00ac9fef08", "12ebbba6447cfd61491ace18a6972d4edaab6615c933ae8a0016c27c27ee93b7", "1973a131a7b5a604653ffd904286e53334c08306b575bf964ae87f226d4956cd", "21c130c2741e8499ad92362d24f68aad70089e77b206e6e85d62e255e6017c92", "21c6287beabb96c9f51478506b00db269276d84aa41a61f29c88af397406b267", "2e07d11526c70bfb3a07c77d73c72b7fcfae21cc7f2252c7d6419e25b6349d23", "32755f26f46816e46bd74fd48c4db63ee500b68cbe2394b2943daab573d12a33", "343ace5ffbab036536a3da65e4cfd31b8292388a389f6305744984581a479b2a", "3de37e2de83fa4016886bf40069e9cc7816b51a1f57687e6872cb414f891a573", "809db4d5213bfb0205e2dcc6118fbfa348e3ae39f3d8f6810e3e6831f3070321", "8810319a64d4cf5701feb7c2833b03f8bd29e1d6753e4b97cf977f889eb6354d", "8b91affdcab942ab1319d8d24345a3de8e0e70fd2871d5bb61e19e32b5ae31d9", "8e3d51a2d20a982a6eb38b0b9bcecdd2acacdcf2137081b0a744ca98cdcca9af", "97cc58bff414bf40b8b909aeadaa669becad35e182a2b229d0c3d6c9a34e1f15", "a6f4f214d6dc6253846630af7a701ee00ebd2730eca03c7e8e031d748b0e22e4", "e1e34869d005e3e5292f44022e01cc4eb3f045291ba01166908f97f4716e7a69", "effc63d7f86841cec3a4a76ed6c73f441e68c5ea02c3dee3faaaeda9fabc8cd8", "fc4c69b505f9178aa55b780cd8cde7c17927501046c7f0ebcd66959cd0dba2db"]
+south = ["d360bd31898f9df59f6faa786551065bba45b35e7ee3c39b381b4fbfef7392f4"]

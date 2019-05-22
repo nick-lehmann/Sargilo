@@ -1,0 +1,6 @@
+.venv
+.idea
+docs/build
+sargilo.egg-info
+**.pyc
+pip-wheel-metadata

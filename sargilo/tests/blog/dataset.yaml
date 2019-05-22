@@ -1,0 +1,116 @@
+# ==========================
+#  USERS (Staff and normal)
+# ==========================
+Users:
+  - &Admin
+    username:     "Admin"
+    first_name:   "Ernst"
+    last_name:    "Haft"
+    email:        "ernst@mail.de"
+    password:     "very_secret"
+    is_staff:      True
+    is_superuser:  True
+  - &Editor
+    username:     "Editor"
+    first_name:   "Wendy"
+    last_name:    "Lator"
+    email:        "wendy@mail.de"
+    password:     "very_secret"
+    is_staff:      True
+    is_superuser:  False
+
+  - &Christoph
+    username:     "christoph_smaul"
+    first_name:   "Christoph"
+    last_name:    "Smaul"
+    email:        "christoph@mail.de"
+    password:     "christoph_smaul"
+    is_staff:     False
+    is_superuser: False
+    is_active:    False
+
+  - &Axel
+    username:     "axel_schweiss"
+    first_name:   "Axel"
+    last_name:    "Schweiss"
+    email:        "axel@mail.de"
+    password:     "axel_schweiss"
+    is_staff:     False
+    is_superuser: False
+
+  - &Mike
+    username:     "mike_rosoft"
+    first_name:   "Mike"
+    last_name:    "Rosoft"
+    email:        "mike@mail.de"
+    password:     "mike_rosoft"
+    is_staff:     False
+    is_superuser: False
+
+
+# ======
+#  TAGS
+# ======
+Tags:
+  - &TestTag
+    name: "Test"
+  - &BlueTag
+    name: "Blue"
+
+
+# =======================
+#  POSTS (with comments)
+# =======================
+Posts:
+  - &Post1
+    title: "Hello world"
+    content: "Lorem ipsum dolor amet sunt"
+    publish_date: 28.2.2019
+    author: *Admin
+    slugs:
+      - title: Welcome
+      - title: Technical
+    tags:
+      # - *TestTag
+      # - *BlueTag
+      - name: NewTag
+    comments:
+      - text: "Wonderful post"
+        upvotes: 3
+        author: *Mike
+      - text: "Very good in my opinion"
+        upvotes: 1
+        author: *Christoph
+
+  - &Post2
+    title: "Just a test"
+    content: "This is just a test. This is just a test. This is just a test."
+    publish_date: 1.4.2019
+    tags:
+      - *TestTag
+#    author: *Mike
+    author:
+      username: "edi_tor"
+      email:    "editor@mail.de"
+      password: "edi_tor"
+    comments:
+      - text: "Slightly off-topic"
+        upvotes: 0
+        author: *Axel
+      - text: "Best if have read so far"
+        upvotes: 6
+        author: *Christoph
+
+  - &Post3
+    title: "Lorem ipsum"
+    content: "Lorem ipsum dolor amet sunt and so on"
+    publish_date: 8.6.2017
+    tags:
+      - *BlueTag
+    author: *Editor
+
+
+Slugs:
+
+
+Comments:
