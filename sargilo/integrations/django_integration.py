@@ -54,8 +54,9 @@ class DjangoIntegration(Integration):
             child_model = config.model
 
             for attribute_name in dir(parent_instance):
-                if attribute_name == 'objects':
+                if attribute_name in ['objects', 'base_objects']:
                     continue
+
                 attribute = getattr(parent_instance, attribute_name)
 
                 if type(attribute).__name__ in ['RelatedManager', 'ManyRelatedManager'] and attribute.model is child_model:
@@ -77,6 +78,10 @@ class DjangoIntegration(Integration):
                 continue
 
             field_name = field.name
+
+            for field_type, python_type in DJANGO_FIELD_TO_TYPE_MAPPING.items():
+                if issubclass(type(field), field_type):
+                    field_to_type_mapping[field_name] = python_type
 
             if type(field) in DJANGO_FIELD_TO_TYPE_MAPPING:
                 field_type = DJANGO_FIELD_TO_TYPE_MAPPING.get(type(field))

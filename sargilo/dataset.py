@@ -56,7 +56,7 @@ class Dataset:
 
     # TODO: amend type hint for dataset_file to Path with Python3
     def __init__(self, dataset_file, config, integration):
-        # type: (str, List[CollectionConfig], Integration) -> Dataset
+        # type: (str, Dict[CollectionConfig], Integration) -> Dataset
         self.dataset_file = dataset_file
         self.config = config
         self.integration = integration
@@ -114,10 +114,9 @@ class Dataset:
 
     def process_string_value(self, value):
         try:
-            return str(value)
-        except UnicodeEncodeError as e:
-            raise UnicodeEncodeError('Cannot decode the following value due to unicode issues: {}'
-                                     'This might be caused by python2'.format(value))
+            return u'{}'.format(value)
+        except UnicodeEncodeError:
+            raise UnicodeEncodeError(u'Cannot decode the following value due to unicode issues: {}. This might be caused by python2'.format(value))
 
     def process_integer_value(self, value):
         return int(value)
@@ -229,6 +228,9 @@ class Dataset:
 
     def create_object(self, collection, raw_item, parent_instance=None):
         # type: (Collection, dict, object) -> object
+        if not raw_item:
+            return None
+
         data = dict()
         anchor = get_anchor_value(raw_item)
         type_map = self.integration.introspect_collection(collection.config)

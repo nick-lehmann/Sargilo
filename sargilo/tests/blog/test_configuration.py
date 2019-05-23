@@ -56,10 +56,6 @@ test_configuration = {
         model=Slug,
         creation_function=dcm
     ),
-    'Comments': CollectionConfig(
-        model=Comment,
-        creation_function=dcm
-    ),
     'Critiques': CollectionConfig(
         model=Critique,
         creation_function=dcm
