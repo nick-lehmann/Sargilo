@@ -4,7 +4,7 @@ from datetime import date
 from django.contrib.auth.models import User, Group, Permission
 from django.test import TestCase
 
-from .test_configuration import test_configuration, dataset_path
+from .test_configuration import test_configuration, dataset_path, schema_path
 from sargilo.collection import CollectionConfig
 from sargilo.dataset import Dataset
 from sargilo.relations import (
@@ -93,32 +93,73 @@ class SchemaTestCase(TestCase):
         )
         self.dataset.read_dataset()
         self.dataset.create_collections()
-        self.type_mappings = {collection: self.dataset.integration.introspect_collection(collection.config) for collection in self.dataset.collections}
+        self.type_mappings = {collection: self.dataset.integration.introspect_collection(collection.config) for
+                              collection in self.dataset.collections}
 
     # TODO: Implement requirements
     def test_single_definition_without_requirements(self):
         schema = JSONSchema(self.type_mappings)
         expected_definition = """
         {
-          "type": "object",
-          "properties": {
-            "username": {"type": "string"},
-            "first_name": {"type": "string"},
-            "last_name": {"type": "string"},
-            "password": {"type": "string"},
-            "email": {"type": "string"},
-            "is_staff": {"type":  "boolean"},
-            "is_superuser": {"type":  "boolean"},
-            "is_active": {"type":  "boolean"}
-          }
+            "type":"object",
+            "properties":{
+                "username":{"type":"string"},
+                "first_name":{"type":"string"},
+                "last_name":{"type":"string"},
+                "posts":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/post"
+                    }
+                },
+                "critiques":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/critique"
+                    }
+                },
+                "is_active":{"type":"boolean"},
+                "is_superuser":{"type":"boolean"},
+                "is_staff":{"type":"boolean"},
+                "password":{"type":"string"},
+                "email":{"type":"string"}
+           }
         }
         """
         expected_definition_dict = json.loads(expected_definition)
 
         user_collection = self.dataset.find_collection_by_model(User)
         generated_definition_dict = schema.create_definition(self.type_mappings.get(user_collection))
-        
+
         self.assertEqual(generated_definition_dict, expected_definition_dict)
+
+    def test_single_list_creation(self):
+        schema = JSONSchema(self.type_mappings)
+        expected_list = """
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/user"
+            }
+        }
+        """
+
+        expected_list_dict = json.loads(expected_list)
+
+        user_collection = self.dataset.find_collection_by_model(User)
+        generated_list = schema.create_list(user_collection)
+
+        self.assertEqual(expected_list_dict, generated_list)
+
+    def test_schema_generation(self):
+        schema = JSONSchema(self.type_mappings)
+
+        expected_schema = json.load(open(schema_path))
+        generated_schema = schema.generate()
+
+        self.maxDiff = None
+
+        self.assertEqual(expected_schema, generated_schema)
 
 
 class CreationTestCase(TestCase):
