@@ -1,3 +1,4 @@
+import json
 from datetime import date
 
 from django.contrib.auth.models import User, Group, Permission
@@ -12,6 +13,7 @@ from sargilo.relations import (
     ManyToManyRelation
 )
 from sargilo.integrations.django_integration import DjangoIntegration
+from sargilo.schema import JSONSchema
 from sargilo.tests.blog.models import Post, Tag, Slug, Comment, Critique
 
 from typing import GenericMeta
@@ -80,6 +82,43 @@ class DjangoIntegrationTestCase(TestCase):
 
         self.assertEqual(type(type_mapping['user_permissions']), GenericMeta)
         self.assertEqual(type_mapping['user_permissions'].__args__[1], Permission)
+
+
+class SchemaTestCase(TestCase):
+    def setUp(self):
+        self.dataset = Dataset(
+            dataset_file=dataset_path,
+            config=test_configuration,
+            integration=DjangoIntegration()
+        )
+        self.dataset.read_dataset()
+        self.dataset.create_collections()
+        self.type_mappings = {collection: self.dataset.integration.introspect_collection(collection.config) for collection in self.dataset.collections}
+
+    # TODO: Implement requirements
+    def test_single_definition_without_requirements(self):
+        schema = JSONSchema(self.type_mappings)
+        expected_definition = """
+        {
+          "type": "object",
+          "properties": {
+            "username": {"type": "string"},
+            "first_name": {"type": "string"},
+            "last_name": {"type": "string"},
+            "password": {"type": "string"},
+            "email": {"type": "string"},
+            "is_staff": {"type":  "boolean"},
+            "is_superuser": {"type":  "boolean"},
+            "is_active": {"type":  "boolean"}
+          }
+        }
+        """
+        expected_definition_dict = json.loads(expected_definition)
+
+        user_collection = self.dataset.find_collection_by_model(User)
+        generated_definition_dict = schema.create_definition(self.type_mappings.get(user_collection))
+        
+        self.assertEqual(generated_definition_dict, expected_definition_dict)
 
 
 class CreationTestCase(TestCase):

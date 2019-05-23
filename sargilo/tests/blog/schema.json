@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://sargilo.de/test",
+  "title": "Sargilo Test schema",
+  "type": "object",
+
+  "definitions": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {"type": "string"},
+        "first_name": {"type": "string"},
+        "last_name": {"type": "string"},
+        "password": {"type": "string"},
+        "email": {"type": "string"},
+        "is_staff": {"type":  "boolean"},
+        "is_superuser": {"type":  "boolean"},
+        "is_active": {"type":  "boolean"}
+      },
+      "required": ["username", "password", "email"]
+    },
+
+    "slug": {
+      "type": "object",
+      "properties": {
+        "title": {"type": "string"},
+        "post": {
+          "$ref": "#/definitions/post"
+        }
+      }
+    },
+
+    "tag": {
+      "type": "object",
+      "properties": {
+        "name": {"type":  "string"}
+      },
+      "required": ["name"]
+    },
+
+    "comment": {
+      "type": "object",
+      "properties": {
+        "text": {"type":  "string"},
+        "upvotes": {"type":  "integer", "minimum":  0},
+        "author": {"$ref": "#/definitions/user"},
+        "post": {"$ref":  "#/definitions/post"}
+      },
+      "required": ["text", "upvotes"]
+    },
+
+    "post": {
+      "type": "object",
+      "required": ["title", "content", "publish_date", "author"],
+      "properties": {
+        "title": {"type": "string"},
+        "content": {"type": "string"},
+        "publish_date": {"type": "string", "format":  "date"},
+
+        "author": {"$ref": "#/definitions/user"},
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tag"
+          }
+        },
+
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/comment"
+          }
+        }
+
+      }
+    }
+  },
+
+  "properties": {
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/user"
+      }
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/tag"
+      }
+    },
+    "Posts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/post"
+      }
+    }
+  }
+}

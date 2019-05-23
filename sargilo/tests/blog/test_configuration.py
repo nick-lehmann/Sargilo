@@ -3,7 +3,7 @@ import os
 from django.contrib.auth.models import User
 
 from sargilo.collection import CollectionConfig
-from .models import Post, Comment, Tag, Slug
+from .models import Post, Comment, Tag, Slug, Critique
 
 
 # default creation method
@@ -59,8 +59,13 @@ test_configuration = {
     'Comments': CollectionConfig(
         model=Comment,
         creation_function=dcm
+    ),
+    'Critiques': CollectionConfig(
+        model=Critique,
+        creation_function=dcm
     )
 }
 
 current_dir = os.path.dirname(__file__)
 dataset_path = os.path.join(current_dir, 'dataset.yaml')
+schema_path = os.path.join(current_dir, 'schema.json')
