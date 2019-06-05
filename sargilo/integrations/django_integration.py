@@ -9,6 +9,7 @@ from sargilo.relations import (
 )
 
 from django.db.models import Model as DjangoModel
+from django.db.models import get_model, get_models
 from django.db.models.fields import (
     Field,
     AutoField,                  # should be ignored
@@ -66,9 +67,12 @@ class DjangoIntegration(Integration):
 
         return model_instance
 
-    def introspect_collection(self, collection_config):
-        # type: (CollectionConfig) -> dict
-        model = collection_config.model  # type: DjangoModel
+    def introspect_collection(self, collection_config=None, model=None):
+        # type: (CollectionConfig, DjangoModel) -> dict
+        assert collection_config or model
+
+        if not model:
+            model = collection_config.model  # type: DjangoModel
 
         field_to_type_mapping = dict()
 
@@ -111,3 +115,15 @@ class DjangoIntegration(Integration):
             field_to_type_mapping[relation_name] = ManyToManyRelation[through_model, referenced_model]
 
         return field_to_type_mapping
+
+    def model_to_collection_names(self, model):
+        # type: (Model) -> List[str]
+        return [model._meta.object_name, '.'.join((model._meta.app_label, model._meta.object_name))]
+
+    def collection_name_to_model(self, collection_name):
+        # type: (str) -> Model
+        if '.' in collection_name:
+            app_label, model_name = collection_name.split('.')
+            return get_model(app_label=app_label, model_name=model_name)
+        else:
+            return next(model for model in get_models() if model._meta.object_name == collection_name)

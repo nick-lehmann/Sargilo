@@ -59,7 +59,7 @@ class DjangoIntegrationTestCase(TestCase):
         user_configuration = CollectionConfig(model=User)
         type_mapping = self.django_integration.introspect_collection(user_configuration)
 
-        self.assertEqual(len(type_mapping), 12)
+        self.assertEqual(len(type_mapping), 14)
 
         # Basic types
         self.assertEqual(type_mapping['username'], str)
@@ -71,6 +71,9 @@ class DjangoIntegrationTestCase(TestCase):
         self.assertEqual(type_mapping['is_active'], bool)
         self.assertEqual(type_mapping['is_staff'], bool)
         self.assertEqual(type_mapping['is_superuser'], bool)
+
+        self.assertEqual(type_mapping['date_joined'], date)
+        self.assertEqual(type_mapping['last_login'], date)
 
         # Custom defined relations
         self.assertEqual(type_mapping['posts'], IncomingForeignKeyRelation[Post])
@@ -93,12 +96,10 @@ class SchemaTestCase(TestCase):
         )
         self.dataset.read_dataset()
         self.dataset.create_collections()
-        self.type_mappings = {collection: self.dataset.integration.introspect_collection(collection.config) for
-                              collection in self.dataset.collections}
+        self.schema = JSONSchema(integration=DjangoIntegration())
 
     # TODO: Implement requirements
     def test_single_definition_without_requirements(self):
-        schema = JSONSchema(self.type_mappings)
         expected_definition = """
         {
             "type":"object",
@@ -129,12 +130,12 @@ class SchemaTestCase(TestCase):
         expected_definition_dict = json.loads(expected_definition)
 
         user_collection = self.dataset.find_collection_by_model(User)
-        generated_definition_dict = schema.create_definition(self.type_mappings.get(user_collection))
+        generated_definition_dict = self.schema.create_definition(self.type_mappings.get(user_collection))
 
         self.assertEqual(generated_definition_dict, expected_definition_dict)
 
     def test_single_list_creation(self):
-        schema = JSONSchema(self.type_mappings)
+        schema = JSONSchema(integration=DjangoIntegration())
         expected_list = """
         {
             "type": "array",
@@ -152,7 +153,7 @@ class SchemaTestCase(TestCase):
         self.assertEqual(expected_list_dict, generated_list)
 
     def test_schema_generation(self):
-        schema = JSONSchema(self.type_mappings)
+        schema = JSONSchema(integration=DjangoIntegration())
 
         expected_schema = json.load(open(schema_path))
         generated_schema = schema.generate()

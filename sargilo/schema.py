@@ -1,31 +1,32 @@
 from datetime import date, datetime, time
-from typing import Dict, Type, Union
+from django.db.models import get_models
+from typing import List
 
-from sargilo.collection import Collection
+from sargilo.integrations.base import Integration
 from sargilo.relations import (
     IncomingForeignKeyRelation,
     OutgoingForeignKeyRelation,
     ManyToManyRelation
 )
 
-TypeMapping = Dict[str, Type]
-
 
 class JSONSchema:
     # TODO: Implement requirements for each collection
     # TODO: Add validators to schema (e.g. minimum number for integers)
-    def __init__(self, type_mappings):
-        # type: (Dict[Collection, TypeMapping]) -> JSONSchema
-        self.type_mappings = type_mappings
+    def __init__(self, integration, models=None):
+        # type: (Integration, List[object]) -> JSONSchema
+        self.models = models if models else get_models()
+        self.integration = integration
 
         self.definitions = dict()
         self.top_level_properties = dict()
-        self.collections = type_mappings.keys()
 
     def generate(self):
-        for collection, type_mapping in self.type_mappings.items():
-            self.definitions[self.get_definition_name(collection.name)] = self.create_definition(type_mapping)
-            self.top_level_properties[u'{}'.format(collection.name)] = self.create_list(collection)
+        for model in self.models:
+            self.definitions[self.get_definition_name(model)] = self.create_definition(self.integration.introspect_collection(model=model))
+
+            for expected_name in self.integration.model_to_collection_names(model):
+                self.top_level_properties[u'{}'.format(expected_name)] = self.create_list(model)
 
         return {
             u'$schema': u'http://json-schema.org/draft-07/schema#',
@@ -63,22 +64,19 @@ class JSONSchema:
                 }
 
             if issubclass(expected_type, OutgoingForeignKeyRelation):
-                referenced_definition = self.get_collection_name_by_model(expected_type.__args__[0])
+                definition_name = self.get_definition_name(expected_type.__args__[0])
 
-                if not referenced_definition:
+                if not definition_name:
                     continue
-
-                definition_name = self.get_definition_name(referenced_definition)
 
                 properties[key] = {
                     u'$ref': u'#/definitions/{}'.format(definition_name)
                 }
 
             if issubclass(expected_type, IncomingForeignKeyRelation):
-                referenced_definition = self.get_collection_name_by_model(expected_type.__args__[0])
-                definition_name = self.get_definition_name(referenced_definition)
+                definition_name = self.get_definition_name(expected_type.__args__[0])
 
-                if not referenced_definition:
+                if not definition_name:
                     continue
 
                 properties[key] = {
@@ -92,14 +90,9 @@ class JSONSchema:
                 through_model, referenced_model = expected_type.__args__
 
                 if through_model is not type(None):
-                    referenced_definition = self.get_collection_name_by_model(through_model)
+                    definition_name = self.get_definition_name(through_model)
                 else:
-                    referenced_definition = self.get_collection_name_by_model(referenced_model)
-
-                if not referenced_definition:
-                    continue
-
-                definition_name = self.get_definition_name(referenced_definition)
+                    definition_name = self.get_definition_name(referenced_model)
 
                 properties[key] = {
                     u'type': u'array',
@@ -113,9 +106,8 @@ class JSONSchema:
             u'properties': properties
         }
 
-    def create_list(self, collection):
-        model = collection.config.model
-        definition_name = self.get_definition_name(self.get_collection_name_by_model(model))
+    def create_list(self, model):
+        definition_name = self.get_definition_name(model)
 
         return {
             u'type': u'array',
@@ -124,16 +116,7 @@ class JSONSchema:
             }
         }
 
-    def get_definition_name(self, name):
-        # type: (str) -> unicode
-        if name.endswith('s'):
-            name = name.rstrip('s')
+    def get_definition_name(self, model):
+        # type: (object) -> unicode
+        return self.integration.model_to_collection_names(model)[0].lower()
 
-        return u'{}'.format(name.lower())
-
-    def get_collection_name_by_model(self, model):
-        # type: (object) -> Union[unicode, None]
-        try:
-            return u'{}'.format(next(c.name for c in self.collections if c.config.model is model))
-        except StopIteration:
-            return None

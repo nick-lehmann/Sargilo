@@ -79,7 +79,6 @@ class Dataset:
             print('Something is not right with your yaml')
             sys.exit(1)
 
-    # TODO: Remove as there are no longer sections
     def create_collections(self):
         # type: () -> None
         """
