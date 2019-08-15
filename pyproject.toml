@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sargilo"
-version = "0.1.0"
+version = "0.1.1"
 description = "Dynamic loader for test data"
 authors = ["Nick Lehmann <nicklehmann@protonmail.ch>"]
 
