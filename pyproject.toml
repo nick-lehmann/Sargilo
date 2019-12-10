@@ -2,7 +2,7 @@
 name = "sargilo"
 version = "0.1.1"
 description = "Dynamic loader for test data"
-authors = ["Nick Lehmann <nicklehmann@protonmail.ch>"]
+authors = ["Nick Lehmann <nick@lehmann.sh>"]
 
 [tool.poetry.dependencies]
 python = ">=2.7"
