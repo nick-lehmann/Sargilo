@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "sargilo"
-version = "0.1.1"
+version = "0.1.3"
 description = "Dynamic loader for test data"
 authors = ["Nick Lehmann <nick@lehmann.sh>"]
 
 [tool.poetry.dependencies]
 python = ">=2.7"
 "ruamel.yaml" = "*"
-south = "*"
+typing = "*"
 
 [tool.poetry.dev-dependencies]
-django = "~1.4"
+django = ""
 
 [tool.poetry.extras]
 docs = ["sphinx", "recommonmark", "sphinx_rtd_theme"]

@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  test:
+    image: sargilo:django14
+    build:
+      dockerfile: sargilo/tests/django14_test_project/Dockerfile
+      context: .
+
+    working_dir: /app/sargilo/tests/django14_test_project
+    volumes:
+      - .:/app
+
+    user: "1000:1000"
+
+    command: "tail -f /dev/null"

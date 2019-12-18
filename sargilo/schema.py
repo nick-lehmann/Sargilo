@@ -1,5 +1,4 @@
 from datetime import date, datetime, time
-from django.db.models import get_models
 from typing import List
 
 from sargilo.integrations.base import Integration
@@ -8,6 +7,11 @@ from sargilo.relations import (
     OutgoingForeignKeyRelation,
     ManyToManyRelation
 )
+
+try:
+    from django.db.models import get_models
+except ImportError:
+    pass
 
 
 class JSONSchema:

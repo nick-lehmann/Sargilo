@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, date
 
 from .base import Integration
@@ -9,29 +10,39 @@ from sargilo.relations import (
 )
 
 from django.db.models import Model as DjangoModel
-from django.db.models import get_model, get_models
-from django.db.models.fields import (
-    Field,
-    AutoField,                  # should be ignored
-    CharField, TextField, EmailField,
-    IntegerField,
-    BooleanField,
-    DateField
-)
-from django.db.models.fields.related import (
-    ForeignKey, ForeignRelatedObjectsDescriptor,
-    ManyToManyField
-)
 
-IGNORED_FIELDS = [AutoField]
-DJANGO_FIELD_TO_TYPE_MAPPING = {
-    CharField: str,
-    TextField: str,
-    EmailField: str,
-    DateField: date,
-    BooleanField: bool,
-    IntegerField: int,
-}
+try:
+    from django.db.models import get_model, get_models
+    from django.db.models.fields import (
+        Field,
+        AutoField,                  # should be ignored
+        CharField, TextField, EmailField,
+        IntegerField,
+        BooleanField,
+        DateField
+    )
+    from django.db.models.fields.related import (
+        ForeignKey, ForeignRelatedObjectsDescriptor,
+        ManyToManyField
+    )
+
+    IGNORED_FIELDS = [AutoField]
+    DJANGO_FIELD_TO_TYPE_MAPPING = {
+        CharField: str,
+        TextField: str,
+        EmailField: str,
+        DateField: date,
+        BooleanField: bool,
+        IntegerField: int,
+    }
+
+except ImportError:
+    def return_emtpy_list():
+        return list()
+
+    get_model = return_emtpy_list
+    get_models = return_emtpy_list
+    raise UserWarning('Sargilo currently does not work with Django versions newer than 1.4')
 
 
 class DjangoIntegration(Integration):

@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from unittest import skipIf
 
 from django.contrib.auth.models import User, Group, Permission
 from django.test import TestCase
@@ -16,7 +17,20 @@ from sargilo.integrations.django_integration import DjangoIntegration
 from sargilo.schema import JSONSchema
 from sargilo.tests.blog.models import Post, Tag, Slug, Comment, Critique
 
-from typing import GenericMeta
+import django
+
+try:
+    from typing import GenericMeta
+except ImportError:
+    pass
+
+DJANGO_VERSION = django.get_version()
+DJANGO_VERSION_PARTS = list(map(int, DJANGO_VERSION.split('.')))
+DJANGO_NOT_SUPPORTED = (
+    DJANGO_VERSION_PARTS[0] > 1 or
+    DJANGO_VERSION_PARTS[0] == 1 and DJANGO_VERSION_PARTS[1] > 7
+)
+DJANGO_ERROR = 'Django version {} is currently not supported'.format(DJANGO_VERSION)
 
 
 class DjangoIntegrationTestCase(TestCase):
@@ -34,6 +48,7 @@ class DjangoIntegrationTestCase(TestCase):
 
         self.assertEqual(Tag.objects.all().count(), 1)
 
+    @skipIf(DJANGO_NOT_SUPPORTED, DJANGO_ERROR)
     def test_post_introspection(self):
         """
         Test more complex model with all types of relations.
@@ -55,6 +70,7 @@ class DjangoIntegrationTestCase(TestCase):
         self.maxDiff = 0
         self.assertEqual(type_mapping, expected_mapping)
 
+    @skipIf(DJANGO_VERSION, DJANGO_ERROR)
     def test_user_introspection(self):
         user_configuration = CollectionConfig(model=User)
         type_mapping = self.django_integration.introspect_collection(user_configuration)
@@ -87,6 +103,7 @@ class DjangoIntegrationTestCase(TestCase):
         self.assertEqual(type_mapping['user_permissions'].__args__[1], Permission)
 
 
+@skipIf(DJANGO_NOT_SUPPORTED, DJANGO_ERROR)
 class SchemaTestCase(TestCase):
     def setUp(self):
         self.dataset = Dataset(
@@ -163,6 +180,7 @@ class SchemaTestCase(TestCase):
         self.assertEqual(expected_schema, generated_schema)
 
 
+@skipIf(DJANGO_NOT_SUPPORTED, DJANGO_ERROR)
 class CreationTestCase(TestCase):
     def setUp(self):
         self.dataset = Dataset(

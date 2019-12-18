@@ -1,5 +1,4 @@
 from typing import List, Optional
-from django.db.models import Model, get_model, get_models
 from ..collection import CollectionConfig
 
 

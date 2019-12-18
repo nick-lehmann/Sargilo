@@ -18,7 +18,8 @@ class Critique(models.Model):
     author = models.ForeignKey(
         User,
         verbose_name='author',
-        related_name='critiques'
+        related_name='critiques',
+        on_delete=models.PROTECT
     )
 
 
@@ -58,7 +59,8 @@ class Post(models.Model):
         Critique,
         verbose_name='Critique',
         related_name='post',
-        blank=True, null=True
+        blank=True, null=True,
+        on_delete=models.PROTECT
     )
 
     def __str__(self):
@@ -75,7 +77,8 @@ class Slug(models.Model):
     title = models.CharField(max_length=255)
     post = models.ForeignKey(
         Post,
-        related_name='slugs'
+        related_name='slugs',
+        on_delete=models.PROTECT
     )
 
     def __str__(self):

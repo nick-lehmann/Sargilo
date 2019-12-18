@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "django30_test_project"
+version = "1.0.0"
+description = "Django 3.0 Test project for Sargilo"
+authors = ["Nick Lehmann <nick@lehmann.sh>"]
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+sargilo = { path = "../../.." }
+django = "^3.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
