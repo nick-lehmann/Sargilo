@@ -3,7 +3,7 @@ import os
 from django.contrib.auth.models import User
 
 from sargilo.collection import CollectionConfig
-from .models import Post, Comment, Tag, Slug, Critique
+from sargilo.tests.blog.models import Post, Comment, Tag, Slug, Critique
 
 
 # default creation method

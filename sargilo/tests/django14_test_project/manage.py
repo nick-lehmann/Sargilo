@@ -9,7 +9,7 @@ import os
 import sys
 
 if __name__ == '__main__':
-    os.environ.setdefault(b'DJANGO_SETTINGS_MODULE', b'django14_test_project.settings')
+    os.environ.setdefault(b'DJANGO_SETTINGS_MODULE', b'settings')
 
     from django.core.management import execute_from_command_line
 

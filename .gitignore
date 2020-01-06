@@ -1,5 +1,6 @@
 .venv
 .idea
+.tox
 docs/build
 *.egg-info
 **.pyc
