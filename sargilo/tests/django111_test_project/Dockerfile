@@ -5,9 +5,9 @@ RUN apk add build-base libffi-dev openssl-dev git
 
 WORKDIR /app
 
-# Copy both pyproject.toml files
+# Copy both pyproject.toml files and all files referenced in them (e.g. README)
 COPY sargilo/tests/django111_test_project/pyproject.toml sargilo/tests/django111_test_project/
-COPY pyproject.toml .
+COPY pyproject.toml README.md ./
 
 # Install only dependencies
 WORKDIR /app/sargilo/tests/django111_test_project/
