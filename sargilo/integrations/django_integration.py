@@ -1,5 +1,4 @@
-import sys
-from datetime import datetime, date
+from datetime import date
 
 from .base import Integration
 from sargilo.collection import CollectionConfig
@@ -35,14 +34,9 @@ try:
         BooleanField: bool,
         IntegerField: int,
     }
-
+    DJANGO_SUPPORTED = True
 except ImportError:
-    def return_emtpy_list():
-        return list()
-
-    get_model = return_emtpy_list
-    get_models = return_emtpy_list
-    raise UserWarning('Sargilo currently does not work with Django versions newer than 1.4')
+    DJANGO_SUPPORTED = False
 
 
 class DjangoIntegration(Integration):
@@ -50,6 +44,9 @@ class DjangoIntegration(Integration):
     This class fills the gap between Django and Sargilo by providing the following features:
     - determines dependency of a model
     """
+    def __init__(self):
+        if not DJANGO_SUPPORTED:
+            raise UserWarning('Sargilo currently does not work with Django versions newer than 1.4')
 
     def create_instance(self, config, data, parent_instance=None):
         # type: (CollectionConfig, dict, object) -> object

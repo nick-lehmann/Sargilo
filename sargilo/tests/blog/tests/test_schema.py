@@ -1,26 +1,20 @@
 import json
 from unittest import skipIf
 
-import django
 from django.contrib.auth.models import User
 from django.test import TestCase
+
 from sargilo.dataset import Dataset
 from sargilo.integrations.django_integration import DjangoIntegration
 from sargilo.schema import JSONSchema
+
+from .compatibility import DJANGO_NOT_SUPPORTED, DJANGO_ERROR
 from .test_configuration import test_configuration, dataset_path, schema_path
 
 try:
     from typing import GenericMeta
 except ImportError:
     pass
-
-DJANGO_VERSION = django.get_version()
-DJANGO_VERSION_PARTS = list(map(int, DJANGO_VERSION.split('.')))
-DJANGO_NOT_SUPPORTED = (
-        DJANGO_VERSION_PARTS[0] > 1 or
-        DJANGO_VERSION_PARTS[0] == 1 and DJANGO_VERSION_PARTS[1] > 7
-)
-DJANGO_ERROR = 'Django version {} is currently not supported'.format(DJANGO_VERSION)
 
 
 @skipIf(DJANGO_NOT_SUPPORTED, DJANGO_ERROR)
