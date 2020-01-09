@@ -1,7 +1,7 @@
 Sargilo 
 =======
 
-Data loader for Humans
+💾 Data loader for Humans
 
 Sargilo lets you declare your data in a visually pleasing and non-frustrating way and loads it into your environment of choice. YAML usage, validation and auto-completion help you get boring jobs done.
 
