@@ -20,6 +20,7 @@ try:
         BooleanField,
         DateField
     )
+    from django.db.models.fields.files import FileField
     from django.db.models.fields.related import (
         ForeignKey, ForeignRelatedObjectsDescriptor,
         ManyToManyField
@@ -33,6 +34,7 @@ try:
         DateField: date,
         BooleanField: bool,
         IntegerField: int,
+        FileField: str,
     }
     DJANGO_SUPPORTED = True
 except ImportError:
@@ -103,8 +105,21 @@ class DjangoIntegration(Integration):
                 referenced_model = field.rel.to
                 field_to_type_mapping[field_name] = OutgoingForeignKeyRelation[referenced_model]
 
-        # Add incoming foreign key relations
-        for attribute_name in dir(model):  # type: str
+        # Add incoming foreign key relations. If model is a PolymorphicModel then accessing all attributes of the model
+        # by iterating over the result of dir(model) can cause an exception. Instead only the reverse_relations are
+        # determined, these are the only interesting attributes in this context.
+        # class Base(PolymorphicModel):
+        #   pass
+        # class Concrete(Base):
+        #   file = models.FileField
+        # AttributeError: The 'file' attribute can only be accessed from Concrete instances.
+        reverse_relations = []
+        for related_object, related_model in model._meta.get_all_related_objects_with_model():
+            if related_object.field.rel.related_name:
+                reverse_relations.append(related_object.field.rel.related_name)
+            else:
+                reverse_relations.append(related_object.var_name + '_set')
+        for attribute_name in reverse_relations:  # type: str
             attribute = getattr(model, attribute_name)
             if type(attribute) == ForeignRelatedObjectsDescriptor and not attribute_name.endswith('_set'):
                 referencing_model = attribute.related.model
