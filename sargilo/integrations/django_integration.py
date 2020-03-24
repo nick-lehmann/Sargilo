@@ -117,6 +117,8 @@ class DjangoIntegration(Integration):
         for related_object, related_model in model._meta.get_all_related_objects_with_model():
             if related_object.field.rel.related_name:
                 reverse_relations.append(related_object.field.rel.related_name)
+            elif related_object.field.unique:
+                reverse_relations.append(related_object.var_name)
             else:
                 reverse_relations.append(related_object.var_name + '_set')
         for attribute_name in reverse_relations:  # type: str
