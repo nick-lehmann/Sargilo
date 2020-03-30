@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sargilo"
-version = "0.1.6"
+version = "0.1.7"
 description = "💾 Data loader for Humans"
 authors = ["Nick Lehmann <nick@lehmann.sh>"]
 readme = "README.md"
